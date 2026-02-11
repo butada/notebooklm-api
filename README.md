@@ -100,7 +100,7 @@ nlm audio create $NOTEBOOK_ID \
   --format deep_dive \
   --length short \
   --language ja \
-  --focus """$FOCUS"""
+  --focus """$FOCUS""" \
   --confirm
 
 nlm create slides $NOTEBOOK_ID --format detailed_deck --length default --language ja --focus """$FOCUS""" --confirm
