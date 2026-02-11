@@ -1,0 +1,28 @@
+services:
+  nlm-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BASE_IMAGE: ${BASE_IMAGE:-nlm-api-base:latest}
+    ports:
+      - "${API_BIND_IP:-127.0.0.1}:${PORT:-8080}:8080"
+      - "${API_BIND_IP:-127.0.0.1}:${NLM_NOVNC_PORT:-6080}:6080"
+    environment:
+      PORT: ${PORT:-8080}
+      EXEC_TIMEOUT_SECONDS_DEFAULT: ${EXEC_TIMEOUT_SECONDS_DEFAULT:-600}
+      EXEC_MAX_TIMEOUT_SECONDS: ${EXEC_MAX_TIMEOUT_SECONDS:-1800}
+      HEALTH_AUTH_CHECK_ENABLED: ${HEALTH_AUTH_CHECK_ENABLED:-1}
+      NLM_GUI_ENABLE: ${NLM_GUI_ENABLE:-1}
+      NLM_PRESTART_CHROMIUM: ${NLM_PRESTART_CHROMIUM:-0}
+      NLM_VNC_PORT: ${NLM_VNC_PORT:-5900}
+      NLM_NOVNC_PORT: ${NLM_NOVNC_PORT:-6080}
+      DISPLAY: ${DISPLAY:-:99}
+    volumes:
+      - nlm_state:/root/.notebooklm-mcp-cli
+    shm_size: "1gb"
+    init: true
+    restart: unless-stopped
+
+volumes:
+  nlm_state:

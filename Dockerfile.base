@@ -1,0 +1,64 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PATH="/root/.local/bin:${PATH}"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    ca-certificates \
+    curl \
+    tar \
+    jq \
+    procps \
+    chromium \
+    xvfb \
+    x11vnc \
+    novnc \
+    websockify \
+    fluxbox \
+    fonts-noto-cjk \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libxkbcommon0 \
+    libasound2 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libgbm1 \
+    libxrandr2 \
+    libgtk-3-0 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN /root/.local/bin/uv --version && ln -sf /root/.local/bin/uv /usr/local/bin/uv
+RUN /usr/local/bin/uv tool install notebooklm-mcp-cli
+RUN ln -sf /root/.local/bin/nlm /usr/local/bin/nlm
+
+WORKDIR /app
+COPY requirements.txt /app/requirements.txt
+RUN pip install -r /app/requirements.txt
+
+ENV CHROME_BIN=/usr/bin/chromium \
+    CHROMIUM_FLAGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage" \
+    PORT=8080 \
+    EXEC_TIMEOUT_SECONDS_DEFAULT=600 \
+    EXEC_MAX_TIMEOUT_SECONDS=1800 \
+    HEALTH_AUTH_CHECK_ENABLED=0 \
+    NLM_GUI_ENABLE=1 \
+    DISPLAY=:99 \
+    NLM_VNC_PORT=5900 \
+    NLM_NOVNC_PORT=6080
+
+# Ensure nlm (which prefers `google-chrome` on Linux) launches Chromium
+# with container-safe flags.
+RUN printf '%s\n' \
+    '#!/usr/bin/env sh' \
+    'exec /usr/bin/chromium --no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage "$@"' \
+    > /usr/local/bin/google-chrome && \
+    chmod +x /usr/local/bin/google-chrome
