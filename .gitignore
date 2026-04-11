@@ -1,12 +1,39 @@
-# 認証情報 (絶対にコミットしない)
-secrets/nlm-auth.tar.gz
-
-# 環境変数 (各環境で用意する)
+# OS / Editor
 .env
+.DS_Store
+.vscode/
+.idea/
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Local env
+.env
+.env.local
+.env.*.local
+
+# Keep sample env
+!.env.example
+
+# Secrets / local auth artifacts
+secrets/
+*.pem
+*.key
+
+# Runtime outputs
+data/
+logs/
+*.log
+*.pid
+
+# Build / temp
+dist/
+build/
+tmp/
 
 # Claude Code
 .claude/
