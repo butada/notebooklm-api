@@ -1,0 +1,12 @@
+# 認証情報 (絶対にコミットしない)
+secrets/nlm-auth.tar.gz
+
+# 環境変数 (各環境で用意する)
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude Code
+.claude/
